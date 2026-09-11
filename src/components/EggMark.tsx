@@ -242,6 +242,28 @@ export default function EggMark({ playIntro, onReveal, onComplete, className = '
   const [dica, setDica] = useState(false)
   const toques = useRef(0)
 
+  const [ovinhos, setOvinhos] = useState<Ovinho[]>([])
+  const botados = useRef(0)
+  const ultimoOvinho = useRef(0)
+
+  /** Cada toque também "bota" um ovinho colorido que pula de trás do ovo, gira e cai de lado no chão. */
+  const botarOvinho = () => {
+    const agora = performance.now()
+    if (agora - ultimoOvinho.current < 180) return
+    ultimoOvinho.current = agora
+    const n = botados.current++
+    const lado = n % 2 === 0 ? 1 : -1
+    const novo: Ovinho = {
+      id: n,
+      cor: CORES_OVINHOS[n % CORES_OVINHOS.length],
+      lado,
+      distancia: 3.3 + Math.random() * 1.3,
+      giro: (450 + (Math.random() * 30 - 15)) * lado,
+    }
+    setOvinhos((lista) => [...lista.slice(-6), novo])
+    window.setTimeout(() => setOvinhos((lista) => lista.filter((o) => o.id !== n)), 3400)
+  }
+
   // Cada reação devolve quanto tempo (s) o ovo fica ocupado.
 
   /** 1. Pulinho: sobe, estica um tiquinho, pousa amassando. */
@@ -281,11 +303,16 @@ export default function EggMark({ playIntro, onReveal, onComplete, className = '
 
   const REACOES = [pular, balancar, cambalhota]
 
-  /** Toque/clique: cada vez uma reação diferente. É o "hover" de quem está no celular. */
+  /**
+   * Toque/clique: cada vez uma reação diferente, e sempre um ovinho novo.
+   * Tocando rápido durante uma reação, só sai o ovinho. É o "hover" de quem está no celular.
+   */
   const reagir = () => {
-    if (introRunning.current || prefersReducedMotion() || isLocked()) return
+    if (introRunning.current || prefersReducedMotion()) return
     setDica(false)
     marcarOvoTocado()
+    botarOvinho()
+    if (isLocked()) return
     const reacao = REACOES[toques.current % REACOES.length]
     navigator.vibrate?.(reacao === balancar ? [8, 50, 8] : 14)
     const duracao = reacao()
@@ -300,6 +327,13 @@ export default function EggMark({ playIntro, onReveal, onComplete, className = '
         style={{ x: travelX, y: travelY, scale: travelScale }}
       >
         <HatchShadow scaleX={shadowSX} opacity={shadowOpacity} />
+
+        {/* atrás do ovo grande, para parecerem sair dele */}
+        <AnimatePresence>
+          {ovinhos.map((o) => (
+            <OvinhoCaindo key={o.id} ovinho={o} />
+          ))}
+        </AnimatePresence>
 
         <motion.div
           role="img"
@@ -374,6 +408,46 @@ function marcarOvoTocado() {
   } catch {
     // sem armazenamento (aba anônima, bloqueio): a dica volta na próxima visita, sem problema
   }
+}
+
+type Ovinho = { id: number; cor: string; lado: 1 | -1; distancia: number; giro: number }
+
+/** As cores da bandeja: verde-oliva, azulado, rosado, marrom, verde. */
+const CORES_OVINHOS = ['#CFCB9A', '#DDE7E2', '#F1C3A2', '#C98B5E', '#B7C4A0']
+
+/** Ovinho desenhado (mesmo traço das galinhas). Distâncias em % do próprio tamanho. */
+function OvinhoCaindo({ ovinho: o }: { ovinho: Ovinho }) {
+  const X = o.distancia * 100 * o.lado
+  return (
+    <motion.div
+      aria-hidden
+      className="pointer-events-none absolute bottom-[3.5%] left-[43.5%] w-[13%]"
+      initial={{ x: '0%', y: '-190%', scale: 0.5, rotate: 0 }}
+      animate={{
+        x: ['0%', `${X * 0.45}%`, `${X}%`, `${X * 1.08}%`],
+        y: ['-190%', '-330%', '0%', '-26%', '0%'],
+        scale: [0.5, 1, 1, 1],
+        rotate: [0, o.giro * 0.55, o.giro, o.giro + 8 * o.lado],
+      }}
+      exit={{ opacity: 0, scale: 0.7, transition: { duration: 0.45 } }}
+      transition={{
+        x: { duration: 0.95, times: [0, 0.3, 0.7, 1], ease: 'easeOut' },
+        y: { duration: 0.95, times: [0, 0.28, 0.66, 0.82, 1], ease: ['easeOut', 'easeIn', 'easeOut', 'easeIn'] },
+        scale: { duration: 0.28, ease: 'easeOut' },
+        rotate: { duration: 0.95, ease: 'easeOut' },
+      }}
+    >
+      <svg viewBox="0 0 40 50" className="block h-auto w-full overflow-visible">
+        <path
+          d="M20 2C30 2 37 18 37 30C37 41 29 48 20 48C11 48 3 41 3 30C3 18 10 2 20 2Z"
+          fill={o.cor}
+          stroke="#391807"
+          strokeWidth="2.4"
+        />
+        <ellipse cx="13" cy="19" rx="3" ry="5.5" fill="#fff" opacity="0.55" transform="rotate(-18 13 19)" />
+      </svg>
+    </motion.div>
+  )
 }
 
 /** Sombra de lápis: umas poucas hachuras rápidas, como num rascunho. */

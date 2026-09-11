@@ -45,15 +45,15 @@ const FOTOS = {
     larguras: [720, 810],
     proporcao: '8 / 5',
     alt: 'Potes de ovos de codorna em conserva, temperados com ervas e pimenta',
-    rotulo: 'Codorna em conserva',
-    legenda: 'Temperada com ervas e pimenta, sem conservantes.',
+    rotulo: 'Ovos de codorna em conserva',
+    legenda: 'Temperados com ervas e pimenta, sem conservantes.',
   },
   potes: {
     arquivo: 'codorna-potes',
     larguras: [720, 1060],
     proporcao: '4 / 5',
     alt: 'Pirâmide de potes de ovos de codorna em conserva, com rótulo artesanal',
-    rotulo: 'Pronta pra levar',
+    rotulo: 'Prontos pra levar',
     legenda: 'Potes fechados, direto para a sua mesa.',
   },
 } satisfies Record<string, Foto>
