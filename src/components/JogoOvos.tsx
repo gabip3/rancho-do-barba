@@ -669,7 +669,7 @@ export default function JogoOvos() {
                 </button>
                 <a
                   href={whatsappLink(
-                    `Oi, Rancho do Barba! Fiz ${pontos} ${pontos === 1 ? 'ponto' : 'pontos'} no joguinho e agora quero ovos de verdade.`,
+                    `Oi, Rancho do Barba! Fiz ${pontos} ${pontos === 1 ? 'ponto' : 'pontos'} no joguinho e agora quero fazer um pedido.`,
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
