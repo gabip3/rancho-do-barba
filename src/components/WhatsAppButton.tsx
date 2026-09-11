@@ -1,16 +1,39 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { WHATSAPP_EXIBICAO, whatsappLink } from '../lib/contato'
 import { ease } from '../lib/motion'
 
 /** Botão flutuante de pedido. Só entra depois da abertura, para não disputar com o ovo. */
+/**
+ * No celular o hero já tem o "Quero meus ovos" logo acima dos links: o flutuante só entra
+ * depois de rolar um pouco, para não cobrir o "Joguinho ↓". No desktop fica sempre.
+ */
+function useLiberado() {
+  const [liberado, setLiberado] = useState(false)
+  useEffect(() => {
+    const checar = () => setLiberado(window.innerWidth >= 768 || window.scrollY > window.innerHeight * 0.35)
+    checar()
+    window.addEventListener('scroll', checar, { passive: true })
+    window.addEventListener('resize', checar)
+    return () => {
+      window.removeEventListener('scroll', checar)
+      window.removeEventListener('resize', checar)
+    }
+  }, [])
+  return liberado
+}
+
 export default function WhatsAppButton({ show }: { show: boolean }) {
+  // o hook roda sempre (nunca depois de um "show &&"), para a ordem dos hooks não mudar
+  const liberado = useLiberado()
+  const visivel = show && liberado
   return (
     <motion.div
       className="fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 md:right-8 md:bottom-8"
       initial={false}
-      animate={show ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
-      transition={{ duration: 0.6, ease: ease.pouso, delay: show ? 0.5 : 0 }}
-      inert={!show}
+      animate={visivel ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+      transition={{ duration: 0.6, ease: ease.pouso, delay: visivel ? 0.3 : 0 }}
+      inert={!visivel}
     >
       <a
         href={whatsappLink()}

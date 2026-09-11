@@ -117,11 +117,8 @@ export default function RanchoFotos() {
           </motion.p>
         </motion.header>
 
-        {/* espelhada para olhar para o título; no celular fica em pé em cima da primeira foto */}
-        <Galinha
-          pose="em-pe"
-          className="relative z-10 -mb-[6px] mr-5 w-24 shrink-0 -scale-x-100 self-end md:mr-0 md:mb-2 md:w-44 lg:w-52"
-        />
+        {/* celular: em pé em cima da primeira foto (no desktop ela fica em cima da foto do porta-malas) */}
+        <Galinha pose="em-pe" className="relative z-10 -mb-[6px] mr-5 w-24 shrink-0 -scale-x-100 self-end md:hidden" />
       </div>
 
       {/*
@@ -142,7 +139,14 @@ export default function RanchoFotos() {
           <Galinha pose="chocando" className="order-7 col-span-2 w-44 justify-self-center md:w-[46%] md:self-center" />
         </div>
         <div className="contents md:col-span-5 md:flex md:flex-col md:gap-20 md:pt-36">
-          <Figura foto={FOTOS.entrega} reduced={reduced} sizes="(min-width: 768px) 42vw, 100vw" className="order-2 col-span-2" />
+          <div className="relative order-2 col-span-2">
+            {/* desktop: a galinha fica em pé na borda de cima desta foto, olhando para o conteúdo */}
+            <Galinha
+              pose="em-pe"
+              className="absolute right-[14%] bottom-full z-10 -mb-[0.6rem] hidden w-40 -scale-x-100 md:block lg:-mb-[0.7rem] lg:w-48"
+            />
+            <Figura foto={FOTOS.entrega} reduced={reduced} sizes="(min-width: 768px) 42vw, 100vw" />
+          </div>
           <Clipe video={VIDEOS.ninho} reduced={reduced} className="order-4 col-span-1 md:w-[86%] md:self-end" />
           <Figura foto={FOTOS.potes} reduced={reduced} sizes="(min-width: 768px) 42vw, 100vw" className="order-6 col-span-2" />
         </div>

@@ -162,6 +162,82 @@
   mix-blend-mode: multiply;
 }
 
+/* Joguinho: caminhada do Barba e corrida da galinha (coordenadas dos próprios desenhos). */
+.barba-perna-a,
+.barba-perna-b,
+.barba-braco-a,
+.barba-braco-b,
+.galinha-perna-a,
+.galinha-perna-b {
+  transform-box: view-box;
+}
+.barba-perna-a {
+  transform-origin: 50px 148px;
+}
+.barba-perna-b {
+  transform-origin: 70px 148px;
+}
+.barba-braco-a {
+  transform-origin: 36px 100px;
+}
+.barba-braco-b {
+  transform-origin: 84px 100px;
+}
+.galinha-perna-a {
+  transform-origin: 104px 134px;
+}
+.galinha-perna-b {
+  transform-origin: 122px 132px;
+}
+
+.andando .barba-perna-a,
+.andando .barba-braco-b,
+.correndo .galinha-perna-a {
+  animation: passo var(--passo, 0.34s) ease-in-out infinite alternate;
+}
+.andando .barba-perna-b,
+.andando .barba-braco-a,
+.correndo .galinha-perna-b {
+  animation: passo var(--passo, 0.34s) ease-in-out infinite alternate-reverse;
+}
+.andando .barba-corpo,
+.correndo .galinha-corpo {
+  animation: sacode calc(var(--passo, 0.34s) / 2) ease-in-out infinite alternate;
+}
+
+@keyframes passo {
+  from {
+    transform: rotate(-17deg);
+  }
+  to {
+    transform: rotate(17deg);
+  }
+}
+
+@keyframes sacode {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-2.5px);
+  }
+}
+
+/* Joguinho: o ovo pisca no último segundo antes de sumir (o atraso vem inline). */
+.ovo-somendo {
+  animation: ovo-somendo 0.28s steps(1) infinite;
+  animation-fill-mode: backwards;
+}
+
+@keyframes ovo-somendo {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
 /* "Toque no ovo": respira devagar para chamar atenção sem gritar. */
 .dica-pulso {
   animation: dica-pulso 1.8s ease-in-out infinite;

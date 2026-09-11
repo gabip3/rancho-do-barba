@@ -63,7 +63,9 @@ export function GalinhaEmPeSvg({ className = '' }: { className?: string }) {
       <path {...traco} d={EM_PE_CORPO} />
       <path {...traco} d="M50 60 C50 78 56 92 66 100 M43 76 C46 92 52 104 62 112" />
       <path {...traco} d="M84 103 C100 92 122 95 134 108 C120 118 99 119 84 103 Z" />
-      <path {...traco} d="M104 134 L102 156 M122 132 L124 156 M94 157 L102 156 L110 158 M115 157 L124 156 L132 158" />
+      {/* pernas separadas para o joguinho fazer a galinha correr */}
+      <path {...traco} className="galinha-perna-a" d="M104 134 L102 156 M94 157 L102 156 L110 158" />
+      <path {...traco} className="galinha-perna-b" d="M122 132 L124 156 M115 157 L124 156 L132 158" />
       <Cabeca {...EM_PE_CABECA} />
     </svg>
   )

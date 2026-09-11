@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform, type Variants } from 'framer-motion'
 import EggMark from './EggMark'
 import { ease, prefersReducedMotion } from '../lib/motion'
@@ -144,33 +144,44 @@ export default function Hero({ onSettled }: { onSettled?: () => void }) {
               </svg>
             </a>
 
-            <a
-              href="#rancho"
-              className="group text-terra hover:text-tinta relative inline-flex items-center gap-1.5 py-1 text-[0.95rem] font-[450] transition-colors"
-            >
-              Conheça o Rancho
-              <span
-                aria-hidden
-                className="inline-block transition-transform duration-300 ease-(--ease-pouso) group-hover:translate-y-[3px]"
-              >
-                ↓
-              </span>
-              <svg
-                aria-hidden
-                viewBox="0 0 140 6"
-                preserveAspectRatio="none"
-                className="text-casca absolute -bottom-0.5 left-0 h-[5px] w-full transition-colors group-hover:text-caramelo"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-              >
-                <path d="M1.5 3.6 C 30 2.2, 70 4.4, 108 2.8 C 120 2.4, 131 3, 138.5 3.4" />
-              </svg>
-            </a>
+            {/* lado a lado também no celular, para o hero continuar cabendo na primeira tela */}
+            <div className="flex items-center gap-6">
+              <LinkDescer href="#rancho">Conheça o Rancho</LinkDescer>
+              <LinkDescer href="#jogo">Joguinho</LinkDescer>
+            </div>
           </motion.div>
         </motion.div>
       </div>
     </motion.section>
+  )
+}
+
+/** Link que desce para uma seção da página, com o sublinhado de lápis. */
+function LinkDescer({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a
+      href={href}
+      className="group text-terra hover:text-tinta relative inline-flex items-center gap-1.5 py-1 text-[0.95rem] font-[450] transition-colors"
+    >
+      {children}
+      <span
+        aria-hidden
+        className="inline-block transition-transform duration-300 ease-(--ease-pouso) group-hover:translate-y-[3px]"
+      >
+        ↓
+      </span>
+      <svg
+        aria-hidden
+        viewBox="0 0 140 6"
+        preserveAspectRatio="none"
+        className="text-casca absolute -bottom-0.5 left-0 h-[5px] w-full transition-colors group-hover:text-caramelo"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      >
+        <path d="M1.5 3.6 C 30 2.2, 70 4.4, 108 2.8 C 120 2.4, 131 3, 138.5 3.4" />
+      </svg>
+    </a>
   )
 }
