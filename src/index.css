@@ -162,6 +162,21 @@
   mix-blend-mode: multiply;
 }
 
+/* "Toque no ovo": respira devagar para chamar atenção sem gritar. */
+.dica-pulso {
+  animation: dica-pulso 1.8s ease-in-out infinite;
+}
+
+@keyframes dica-pulso {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 /* A galinha espia: vira a cabeça, volta, um restinho de balanço. */
 @keyframes galinha-espia {
   0% {
@@ -186,6 +201,10 @@
   .cta-artesanal:hover {
     transition: none;
     transform: none;
+  }
+
+  .dica-pulso {
+    animation: none;
   }
 
   .galinha .galinha-cabeca,

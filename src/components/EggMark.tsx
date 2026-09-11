@@ -183,6 +183,9 @@ export default function EggMark({ playIntro, onReveal, onComplete, className = '
       running.current = []
       onComplete()
       window.setTimeout(() => cutucar(), 1500)
+      window.setTimeout(() => {
+        if (!jaTocouNoOvo()) setDica(true)
+      }, 1100)
     })()
 
     return () => {
@@ -232,6 +235,8 @@ export default function EggMark({ playIntro, onReveal, onComplete, className = '
   }
 
   const [ovinhos, setOvinhos] = useState<Ovinho[]>([])
+  /** "Toque no ovo": aparece depois da abertura e some de vez no primeiro toque. */
+  const [dica, setDica] = useState(false)
   const botados = useRef(0)
   const ultimoOvinho = useRef(0)
 
@@ -256,6 +261,8 @@ export default function EggMark({ playIntro, onReveal, onComplete, className = '
   /** Toque/clique: pulinho, barba balançando e um ovinho novo. É o "hover" de quem está no celular. */
   const hop = () => {
     if (introRunning.current || prefersReducedMotion()) return
+    setDica(false)
+    marcarOvoTocado()
     navigator.vibrate?.(12)
     botarOvinho()
     if (isLocked()) return
@@ -317,9 +324,43 @@ export default function EggMark({ playIntro, onReveal, onComplete, className = '
         </motion.div>
       </motion.div>
 
+      <AnimatePresence>
+        {dica && (
+          <motion.p
+            key="dica"
+            aria-hidden
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, transition: { duration: 0.3 } }}
+            transition={{ duration: 0.6, ease: ease.pouso }}
+            className="rotulo text-caramelo pointer-events-none absolute top-full left-1/2 mt-1 -translate-x-1/2 whitespace-nowrap text-[0.72rem] md:mt-2 md:text-[0.8rem]"
+          >
+            <span className="dica-pulso">{canHover() ? 'Clique no ovo' : 'Toque no ovo'}</span>
+          </motion.p>
+        )}
+      </AnimatePresence>
+
       {children}
     </div>
   )
+}
+
+const CHAVE_OVO_TOCADO = 'rancho-do-barba:ovo-tocado'
+
+function jaTocouNoOvo() {
+  try {
+    return localStorage.getItem(CHAVE_OVO_TOCADO) === '1'
+  } catch {
+    return false
+  }
+}
+
+function marcarOvoTocado() {
+  try {
+    localStorage.setItem(CHAVE_OVO_TOCADO, '1')
+  } catch {
+    // sem armazenamento (aba anônima, bloqueio): a dica volta na próxima visita, sem problema
+  }
 }
 
 type Ovinho = { id: number; cor: string; lado: 1 | -1; distancia: number; giro: number }

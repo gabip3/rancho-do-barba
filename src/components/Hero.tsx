@@ -72,7 +72,7 @@ export default function Hero({ onSettled }: { onSettled?: () => void }) {
         </p>
       </motion.header>
 
-      <div className="mx-auto grid w-full max-w-[1360px] flex-1 grid-cols-1 content-center items-center gap-y-7 px-6 pb-12 pt-6 md:px-10 lg:grid-cols-12 lg:gap-x-8 lg:px-14 lg:pb-16 lg:pt-0">
+      <div className="mx-auto grid w-full max-w-[1360px] flex-1 grid-cols-1 content-center items-center gap-y-9 px-6 pb-12 pt-6 md:px-10 lg:grid-cols-12 lg:gap-x-8 lg:px-14 lg:pb-16 lg:pt-0">
         {/* Símbolo */}
         <motion.div
           className="relative flex justify-center lg:order-2 lg:col-span-5 lg:justify-start"
