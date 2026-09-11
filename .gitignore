@@ -1,0 +1,13 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.claude/
+.DS_Store
+Thumbs.db
+
+# Originais que não vão para o repositório:
+# vídeos brutos (têm áudio; o site usa os trechos sem som de public/videos)
+video1.mp4
+video2.mp4
+# foto com o rótulo antigo ("Rancho da Família"), fora do site por enquanto
+ovos4.png

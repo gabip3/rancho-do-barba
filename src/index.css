@@ -1,0 +1,197 @@
+@import 'tailwindcss';
+
+/*
+ * Rancho do Barba: tokens
+ * Cores amostradas direto dos arquivos da marca:
+ *   barba  #391807  (média dos pixels escuros do ovo)
+ *   tinta  #2D1306  (tinta do wordmark)
+ *   casca  #EBA66A  (média da casca)
+ */
+@theme {
+  --color-papel: #fdfbf7;
+  --color-tinta: #2d1306;
+  --color-barba: #391807;
+  --color-terra: #6a4a38;
+  --color-casca: #eba66a;
+  --color-caramelo: #b8692f;
+  --color-palha: #f1e6d8;
+  --color-oliva: #5f6b2c;
+  --color-whatsapp: #25d366;
+  --color-whatsapp-escuro: #1ebe5a;
+
+  --font-display: 'Newsreader Variable', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'Jost Variable', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+
+  --ease-pouso: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-papel);
+    color: var(--color-tinta);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-papel);
+    min-height: 100svh;
+  }
+
+  /* Durante a abertura a página não rola. */
+  html[data-intro='playing'],
+  html[data-intro='playing'] body {
+    overflow: hidden;
+  }
+
+  ::selection {
+    background: var(--color-casca);
+    color: var(--color-tinta);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-caramelo);
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  /* Títulos: Newsreader, serifa editorial, firme, com tamanho óptico automático. */
+  .display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.02em;
+  }
+
+  .display-italic {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-style: italic;
+  }
+
+  /* Rótulos pequenos com espaçamento largo, ecoando o "OVOS CAIPIRAS" do logo. */
+  .rotulo {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 450;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  /* Fotos com o mesmo recorte "à mão" do botão, só que mais largo. */
+  .foto-recorte {
+    border-radius: 20px 27px 18px 29px / 27px 18px 29px 20px;
+  }
+
+  /* Galinhas: a cabeça gira no pescoço (coordenadas do próprio desenho). */
+  .galinha .galinha-cabeca {
+    transform-box: view-box;
+    transform-origin: var(--pescoco);
+    transition: transform 520ms var(--ease-pouso);
+  }
+
+  .galinha.espiou .galinha-cabeca {
+    animation: galinha-espia 1.5s var(--ease-pouso) 0.35s;
+  }
+
+  .galinha:hover .galinha-cabeca {
+    transform: rotate(-10deg);
+  }
+
+  /* Botão "cortado à mão": cantos levemente desiguais, grão de papel por cima. */
+  .cta-artesanal {
+    position: relative;
+    isolation: isolate;
+    border-radius: 16px 21px 15px 23px / 21px 15px 22px 16px;
+    background-color: var(--color-barba);
+    color: var(--color-papel);
+    transition:
+      transform 260ms var(--ease-pouso),
+      border-radius 420ms var(--ease-pouso),
+      background-color 200ms ease;
+  }
+
+  .cta-artesanal::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background-image: var(--grao-claro);
+    background-size: 180px;
+    opacity: 0.1;
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+
+  .cta-artesanal:hover {
+    transform: scale(1.03) rotate(-0.4deg);
+    border-radius: 21px 15px 23px 16px / 15px 22px 16px 21px;
+    background-color: var(--color-tinta);
+  }
+
+  .cta-artesanal:active {
+    transform: scale(0.985);
+    transition-duration: 90ms;
+  }
+}
+
+/* Textura de papel sobre a página inteira, sutil, só para tirar o "liso digital". */
+:root {
+  --grao: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .22 0 0 0 0 .1 0 0 0 0 .03 0 0 0 1.6 -.72'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grao-claro: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .95 0 0 0 0 .88 0 0 0 1.4 -.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+.papel-grao {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background-image: var(--grao);
+  background-size: 220px;
+  opacity: 0.1;
+  mix-blend-mode: multiply;
+}
+
+/* A galinha espia: vira a cabeça, volta, um restinho de balanço. */
+@keyframes galinha-espia {
+  0% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-11deg);
+  }
+  55% {
+    transform: rotate(5deg);
+  }
+  78% {
+    transform: rotate(-2deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-artesanal,
+  .cta-artesanal:hover {
+    transition: none;
+    transform: none;
+  }
+
+  .galinha .galinha-cabeca,
+  .galinha:hover .galinha-cabeca {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+}
