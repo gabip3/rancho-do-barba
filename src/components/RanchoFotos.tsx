@@ -48,6 +48,14 @@ const FOTOS = {
     rotulo: 'Codorna em conserva',
     legenda: 'Temperada com ervas e pimenta, sem conservantes.',
   },
+  potes: {
+    arquivo: 'codorna-potes',
+    larguras: [720, 1060],
+    proporcao: '4 / 5',
+    alt: 'Pirâmide de potes de ovos de codorna em conserva, com rótulo artesanal',
+    rotulo: 'Pronta pra levar',
+    legenda: 'Potes fechados, direto para a sua mesa.',
+  },
 } satisfies Record<string, Foto>
 
 const VIDEOS = {
@@ -131,11 +139,12 @@ export default function RanchoFotos() {
             sizes="(min-width: 768px) 46vw, 100vw"
             className="order-5 col-span-2 md:w-[80%] md:self-end"
           />
+          <Galinha pose="chocando" className="order-7 col-span-2 w-44 justify-self-center md:w-[46%] md:self-center" />
         </div>
         <div className="contents md:col-span-5 md:flex md:flex-col md:gap-20 md:pt-36">
           <Figura foto={FOTOS.entrega} reduced={reduced} sizes="(min-width: 768px) 42vw, 100vw" className="order-2 col-span-2" />
           <Clipe video={VIDEOS.ninho} reduced={reduced} className="order-4 col-span-1 md:w-[86%] md:self-end" />
-          <Galinha pose="chocando" className="order-6 col-span-2 w-44 justify-self-center md:w-[64%] md:self-center" />
+          <Figura foto={FOTOS.potes} reduced={reduced} sizes="(min-width: 768px) 42vw, 100vw" className="order-6 col-span-2" />
         </div>
       </div>
     </section>

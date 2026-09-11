@@ -16,6 +16,8 @@ const FOTOS = [
   { src: 'ovos1.png', nome: 'bandejas-entrega', crop: { left: 0, top: 90, width: 1086, height: 1357 } },
   // 8:5, corte fechado nos potes para fugir da toalha estampada
   { src: 'ovos3.png', nome: 'codorna-conserva', crop: { left: 190, top: 540, width: 810, height: 506 } },
+  // 4:5, a pirâmide de potes inteira (rótulo antigo "Rancho da Família" liberado para uso)
+  { src: 'ovos4.png', nome: 'codorna-potes', crop: { left: 13, top: 40, width: 1060, height: 1325 } },
 ]
 
 await mkdir(OUT, { recursive: true })

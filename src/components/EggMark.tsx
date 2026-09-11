@@ -1,12 +1,13 @@
-import { useLayoutEffect, useRef, type ReactNode } from 'react'
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import {
   animate,
+  AnimatePresence,
   motion,
   useMotionValue,
   useSpring,
   type AnimationPlaybackControls,
 } from 'framer-motion'
-import { canHover, ease, isCompact } from '../lib/motion'
+import { canHover, ease, isCompact, prefersReducedMotion } from '../lib/motion'
 import { asset } from '../lib/asset'
 
 /** Proporção do quadro recortado em scripts/prepare-assets.mjs (918 × 1144). */
@@ -181,6 +182,7 @@ export default function EggMark({ playIntro, onReveal, onComplete, className = '
       introRunning.current = false
       running.current = []
       onComplete()
+      window.setTimeout(() => cutucar(), 1500)
     })()
 
     return () => {
@@ -204,6 +206,13 @@ export default function EggMark({ playIntro, onReveal, onComplete, className = '
     run(animate(beardSY, [1, 1.035, 1.03, 1.012, 1], { duration: 0.75, times: t, ease: 'easeInOut' }))
   }
 
+  /** Uma cutucada logo depois da abertura, para mostrar que o ovo reage ao toque. */
+  const cutucar = () => {
+    if (hover.current || isLocked()) return
+    animate(bodyRot, [0, -4, 3.2, -1.4, 0], { duration: 0.8, ease: 'easeInOut' })
+    wiggleBeard()
+  }
+
   const onPointerEnter = () => {
     if (introRunning.current || !canHover()) return
     hover.current = true
@@ -222,16 +231,41 @@ export default function EggMark({ playIntro, onReveal, onComplete, className = '
     tiltTarget.set(0)
   }
 
-  /** Toque/clique: pulinho com pouso. É o "hover" de quem está no celular. */
+  const [ovinhos, setOvinhos] = useState<Ovinho[]>([])
+  const botados = useRef(0)
+  const ultimoOvinho = useRef(0)
+
+  /** Cada toque "bota" um ovinho colorido que pula de trás do ovo, gira e cai de lado no chão. */
+  const botarOvinho = () => {
+    const agora = performance.now()
+    if (agora - ultimoOvinho.current < 180) return
+    ultimoOvinho.current = agora
+    const n = botados.current++
+    const lado = n % 2 === 0 ? 1 : -1
+    const novo: Ovinho = {
+      id: n,
+      cor: CORES_OVINHOS[n % CORES_OVINHOS.length],
+      lado,
+      distancia: 3.3 + Math.random() * 1.3,
+      giro: (450 + (Math.random() * 30 - 15)) * lado,
+    }
+    setOvinhos((lista) => [...lista.slice(-6), novo])
+    window.setTimeout(() => setOvinhos((lista) => lista.filter((o) => o.id !== n)), 3400)
+  }
+
+  /** Toque/clique: pulinho, barba balançando e um ovinho novo. É o "hover" de quem está no celular. */
   const hop = () => {
+    if (introRunning.current || prefersReducedMotion()) return
+    navigator.vibrate?.(12)
+    botarOvinho()
     if (isLocked()) return
-    const up = isCompact() ? -14 : -20
-    const air = 0.4 // sobe + desce, em segundos
+    const up = isCompact() ? -22 : -26
+    const air = 0.44 // sobe + desce, em segundos
     lockedUntil.current = performance.now() + air * 1000 + 560
     animate(bodyY, [0, up, 0], { duration: air, times: [0, 0.5, 1], ease: ['easeOut', 'easeIn'] })
-    animate(bodySY, [1, 1.035, 1], { duration: air, times: [0, 0.4, 1] })
-    animate(shadowSX, [1, 0.78, 1], { duration: air, times: [0, 0.5, 1], ease: ['easeOut', 'easeIn'] })
-    window.setTimeout(() => land(0.75), air * 1000)
+    animate(bodySY, [1, 1.045, 1], { duration: air, times: [0, 0.4, 1] })
+    animate(shadowSX, [1, 0.72, 1], { duration: air, times: [0, 0.5, 1], ease: ['easeOut', 'easeIn'] })
+    window.setTimeout(() => land(1), air * 1000)
   }
 
   return (
@@ -242,10 +276,17 @@ export default function EggMark({ playIntro, onReveal, onComplete, className = '
       >
         <HatchShadow scaleX={shadowSX} opacity={shadowOpacity} />
 
+        {/* atrás do ovo grande, para parecerem sair dele */}
+        <AnimatePresence>
+          {ovinhos.map((o) => (
+            <OvinhoCaindo key={o.id} ovinho={o} />
+          ))}
+        </AnimatePresence>
+
         <motion.div
           role="img"
           aria-label="Símbolo do Rancho do Barba: um ovo com barba"
-          className="absolute inset-0 cursor-default select-none"
+          className="absolute inset-0 cursor-pointer select-none [-webkit-tap-highlight-color:transparent]"
           style={{ rotate: tilt, originX: 0.5, originY: 0.97, opacity }}
           onPointerEnter={onPointerEnter}
           onPointerMove={onPointerMove}
@@ -278,6 +319,46 @@ export default function EggMark({ playIntro, onReveal, onComplete, className = '
 
       {children}
     </div>
+  )
+}
+
+type Ovinho = { id: number; cor: string; lado: 1 | -1; distancia: number; giro: number }
+
+/** As cores da bandeja: verde-oliva, azulado, rosado, marrom, verde. */
+const CORES_OVINHOS = ['#CFCB9A', '#DDE7E2', '#F1C3A2', '#C98B5E', '#B7C4A0']
+
+/** Ovinho desenhado (mesmo traço das galinhas). Distâncias em % do próprio tamanho. */
+function OvinhoCaindo({ ovinho: o }: { ovinho: Ovinho }) {
+  const X = o.distancia * 100 * o.lado
+  return (
+    <motion.div
+      aria-hidden
+      className="pointer-events-none absolute bottom-[3.5%] left-[43.5%] w-[13%]"
+      initial={{ x: '0%', y: '-190%', scale: 0.5, rotate: 0 }}
+      animate={{
+        x: ['0%', `${X * 0.45}%`, `${X}%`, `${X * 1.08}%`],
+        y: ['-190%', '-330%', '0%', '-26%', '0%'],
+        scale: [0.5, 1, 1, 1],
+        rotate: [0, o.giro * 0.55, o.giro, o.giro + 8 * o.lado],
+      }}
+      exit={{ opacity: 0, scale: 0.7, transition: { duration: 0.45 } }}
+      transition={{
+        x: { duration: 0.95, times: [0, 0.3, 0.7, 1], ease: 'easeOut' },
+        y: { duration: 0.95, times: [0, 0.28, 0.66, 0.82, 1], ease: ['easeOut', 'easeIn', 'easeOut', 'easeIn'] },
+        scale: { duration: 0.28, ease: 'easeOut' },
+        rotate: { duration: 0.95, ease: 'easeOut' },
+      }}
+    >
+      <svg viewBox="0 0 40 50" className="block h-auto w-full overflow-visible">
+        <path
+          d="M20 2C30 2 37 18 37 30C37 41 29 48 20 48C11 48 3 41 3 30C3 18 10 2 20 2Z"
+          fill={o.cor}
+          stroke="#391807"
+          strokeWidth="2.4"
+        />
+        <ellipse cx="13" cy="19" rx="3" ry="5.5" fill="#fff" opacity="0.55" transform="rotate(-18 13 19)" />
+      </svg>
+    </motion.div>
   )
 }
 
