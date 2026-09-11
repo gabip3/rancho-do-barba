@@ -223,6 +223,40 @@
   }
 }
 
+/* Joguinho: no pulo o Barba abre pernas e braços ("oba!"). */
+.barba-perna-a,
+.barba-perna-b,
+.barba-braco-a,
+.barba-braco-b {
+  transition: transform 0.12s ease-out;
+}
+.pulando .barba-perna-a {
+  transform: rotate(14deg);
+}
+.pulando .barba-perna-b {
+  transform: rotate(-14deg);
+}
+.pulando .barba-braco-a {
+  transform: rotate(40deg);
+}
+.pulando .barba-braco-b {
+  transform: rotate(-40deg);
+}
+
+/* O ovo dourado fica boiando no alto. */
+.ovo-flutua {
+  animation: ovo-flutua 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes ovo-flutua {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-5px);
+  }
+}
+
 /* Joguinho: o ovo pisca no último segundo antes de sumir (o atraso vem inline). */
 .ovo-somendo {
   animation: ovo-somendo 0.28s steps(1) infinite;
